@@ -1,8 +1,12 @@
 # Dependency directories
 node_modules/
-
 # Optional npm cache directory
 .npm
-
 # dotenv environment variables file
 .env
+
+# managed by open-wa
+**.data.json
+**.node-persist**
+**_IGNORE_**
+# end managed by open-wa
