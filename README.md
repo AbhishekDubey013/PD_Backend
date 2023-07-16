@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # whatsappbot
 Whatsapp bot with node.js
 
@@ -8,3 +9,6 @@ https://youtu.be/fKVQVQ0ETbc
 npm install
 
 node index.js
+=======
+# chat
+>>>>>>> 662e4fe66da6baa4dd03f2ebb0fab391558ddd3a
