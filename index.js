@@ -37,15 +37,24 @@
 
 const express = require('express');
 const { Client } = require('whatsapp-web.js');
-const qrcode = require('qrcode-terminal');
+const qrcode = require('qrcode');
 const { Configuration, OpenAIApi } = require('openai');
 require('dotenv').config();
 
 const app = express();
+const port = process.env.PORT || 3000;
+
 const client = new Client();
+let qrCodeImage = null;
 
 client.on('qr', (qr) => {
-  qrcode.generate(qr, { small: true });
+  qrcode.toDataURL(qr, { errorCorrectionLevel: 'L' }, (err, url) => {
+    if (err) {
+      console.error('QR code generation failed:', err);
+    } else {
+      qrCodeImage = url;
+    }
+  });
 });
 
 client.on('ready', () => {
@@ -73,16 +82,14 @@ client.on('message', (message) => {
   runCompletion(message.body).then((result) => message.reply(result));
 });
 
-// Serve the QR code on the root URL
 app.get('/', (req, res) => {
-  res.setHeader('Content-Type', 'text/plain');
-  client.on('qr', (qr) => {
-    res.send(qr);
-  });
+  if (qrCodeImage) {
+    res.send(`<img src="${qrCodeImage}" alt="QR Code">`);
+  } else {
+    res.send('QR code image not available');
+  }
 });
 
-// Start the server
-const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+  console.log(`Server is running on http://localhost:${port}`);
 });
