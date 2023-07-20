@@ -95,31 +95,3 @@ const server = app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
 
-const pm2 = require('pm2');
-pm2.connect((error) => {
-  if (error) {
-    console.error('Error connecting to pm2:', error);
-    process.exit(1);
-  }
-
-  // Start the server process with pm2
-  pm2.start({
-    script: 'index.js',
-    name: 'whatsapp-bot',
-    watch: true,
-    ignore_watch: ['node_modules'],
-    env: {
-      PORT: port,
-      NODE_ENV: 'production',
-    },
-  }, (error) => {
-    if (error) {
-      console.error('Error starting server with pm2:', error);
-      process.exit(1);
-    }
-
-    console.log('Server process started with pm2');
-    pm2.disconnect();
-  });
-});
-
