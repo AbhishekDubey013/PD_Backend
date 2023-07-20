@@ -83,7 +83,6 @@ client.on('message', (message) => {
 });
 
 app.get('/', (req, res) => {
-  res.send("IT WORKED");
   if (qrCodeImage) {
     res.send(`<img src="${qrCodeImage}" alt="QR Code">`);
   } else {
