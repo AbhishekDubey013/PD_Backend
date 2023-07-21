@@ -46,6 +46,7 @@ const port = process.env.PORT || 3002;
 
 const client = new Client();
 let qrCodeImage = null;
+let lastMessage = '';
 
 client.on('qr', (qr) => {
   qrcode.toDataURL(qr, { errorCorrectionLevel: 'L' }, (err, url) => {
@@ -69,9 +70,12 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 async function runCompletion(message) {
+  // Set the prompt as the last message received
+  const prompt = lastMessage;
+
   const completion = await openai.createCompletion({
     model: 'text-davinci-003',
-    prompt: message,
+    prompt: prompt + '\n' + message, // Concatenate the previous message with the new one
     max_tokens: 200,
   });
   return completion.data.choices[0].text;
@@ -79,7 +83,10 @@ async function runCompletion(message) {
 
 client.on('message', (message) => {
   console.log(message.body);
-  runCompletion(message.body).then((result) => message.reply(result));
+  runCompletion(message.body).then((result) => {
+    message.reply(result);
+    lastMessage = message.body; // Store the last message received
+  });
 });
 
 app.get('/', (req, res) => {
@@ -93,4 +100,5 @@ app.get('/', (req, res) => {
 const server = app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
+
 
