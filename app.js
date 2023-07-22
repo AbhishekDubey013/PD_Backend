@@ -45,15 +45,8 @@ require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 3002;
 
-// Connect to Redis using the provided configuration options
 const redisClient = redis.createClient({
-  host: process.env.REDIS_HOST,
-  port: process.env.REDIS_PORT,
-  password: process.env.REDIS_PASSWORD,
-});
-
-redisClient.on('error', (err) => {
-  console.error('Redis connection error:', err);
+  url: process.env.REDIS_URL,
 });
 
 const client = new Client();
