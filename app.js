@@ -39,18 +39,14 @@ const express = require('express');
 const { Client } = require('whatsapp-web.js');
 const qrcode = require('qrcode');
 const { Configuration, OpenAIApi } = require('openai');
-const redis = require('redis');
 require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 3002;
 
-const redisClient = redis.createClient({
-  url: process.env.REDIS_URL,
-});
-
 const client = new Client();
 let qrCodeImage = null;
+const conversations = new Map();
 
 client.on('qr', (qr) => {
   qrcode.toDataURL(qr, { errorCorrectionLevel: 'L' }, (err, url) => {
@@ -73,22 +69,15 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-function getLastNMessages(whatsappNumber, n) {
-  return new Promise((resolve, reject) => {
-    // Get the last n messages from Redis
-    redisClient.lrange(whatsappNumber, -n, -1, (err, messages) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(messages);
-      }
-    });
-  });
-}
-
-async function runCompletion(whatsappNumber, messages) {
-  // Combine the last 5 messages into a single string
-  const context = messages.join('\n');
+async function runCompletion(whatsappNumber, message) {
+  // Get the conversation history and context for the WhatsApp number
+  const conversation = conversations.get(whatsappNumber) || { history: [], context: '' };
+  
+  // Store the latest message in the history and keep only the last 5 messages
+  conversation.history.push(message);
+  conversation.history = conversation.history.slice(-5);
+  
+  const context = conversation.history.join('\n');
 
   const completion = await openai.createCompletion({
     model: 'text-davinci-003',
@@ -96,23 +85,21 @@ async function runCompletion(whatsappNumber, messages) {
     max_tokens: 200,
   });
 
+  // Update the conversation context for the WhatsApp number
+  conversation.context = completion.data.choices[0].text;
+  conversations.set(whatsappNumber, conversation);
+
   return completion.data.choices[0].text;
 }
 
-client.on('message', async (message) => {
+client.on('message', (message) => {
   console.log(message.from, message.body);
 
   // Get the WhatsApp number from the message
   const whatsappNumber = message.from;
 
-  // Store the message in Redis
-  redisClient.lpush(whatsappNumber, message.body);
-
-  // Get the last 5 messages from Redis
-  const messages = await getLastNMessages(whatsappNumber, 5);
-
-  // Process the messages and send the response
-  runCompletion(whatsappNumber, messages).then((result) => {
+  // Process the message and send the response
+  runCompletion(whatsappNumber, message.body).then((result) => {
     message.reply(result);
   });
 });
