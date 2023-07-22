@@ -45,16 +45,14 @@ require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 3002;
 
+const redisClient = redis.createClient({
+  host: process.env.REDIS_HOST,
+  port: process.env.REDIS_PORT,
+  password: process.env.REDIS_PASSWORD,
+});
+
 const client = new Client();
 let qrCodeImage = null;
-const conversations = new Map();
-
-// Create a new Redis client
-const redisClient = redis.createClient({
-  host: process.env.REDIS_HOST, // Replace with your Redis host
-  port: process.env.REDIS_PORT, // Replace with your Redis port
-  password: process.env.REDIS_PASSWORD, // Replace with your Redis password if applicable
-});
 
 client.on('qr', (qr) => {
   qrcode.toDataURL(qr, { errorCorrectionLevel: 'L' }, (err, url) => {
@@ -77,40 +75,48 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-async function runCompletion(whatsappNumber, message) {
-  // Get the conversation history and context for the WhatsApp number from Redis
-  redisClient.get(whatsappNumber, (err, serializedConversation) => {
-    let conversation = serializedConversation ? JSON.parse(serializedConversation) : { history: '', context: '' };
-    const prompt = conversation.context + '\n' + message;
-
-    openai.createCompletion({
-      model: 'text-davinci-003',
-      prompt,
-      max_tokens: 200,
-    }).then((completion) => {
-      // Update the conversation history and context for the WhatsApp number
-      conversation.history += '\n' + message;
-      conversation.context = completion.data.choices[0].text;
-
-      // Store the updated conversation in Redis
-      redisClient.set(whatsappNumber, JSON.stringify(conversation));
-
-      // Send the completion response
-      client.sendMessage(whatsappNumber, completion.data.choices[0].text);
-    }).catch((error) => {
-      console.error('OpenAI completion failed:', error);
+function getLastNMessages(whatsappNumber, n) {
+  return new Promise((resolve, reject) => {
+    // Get the last n messages from Redis
+    redisClient.lrange(whatsappNumber, -n, -1, (err, messages) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(messages);
+      }
     });
   });
 }
 
-client.on('message', (message) => {
+async function runCompletion(whatsappNumber, messages) {
+  // Combine the last 5 messages into a single string
+  const context = messages.join('\n');
+
+  const completion = await openai.createCompletion({
+    model: 'text-davinci-003',
+    prompt: context,
+    max_tokens: 200,
+  });
+
+  return completion.data.choices[0].text;
+}
+
+client.on('message', async (message) => {
   console.log(message.from, message.body);
 
   // Get the WhatsApp number from the message
   const whatsappNumber = message.from;
 
-  // Process the message and send the response
-  runCompletion(whatsappNumber, message.body);
+  // Store the message in Redis
+  redisClient.lpush(whatsappNumber, message.body);
+
+  // Get the last 5 messages from Redis
+  const messages = await getLastNMessages(whatsappNumber, 5);
+
+  // Process the messages and send the response
+  runCompletion(whatsappNumber, messages).then((result) => {
+    message.reply(result);
+  });
 });
 
 app.get('/', (req, res) => {
@@ -124,7 +130,3 @@ app.get('/', (req, res) => {
 const server = app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
-
-
-
-
