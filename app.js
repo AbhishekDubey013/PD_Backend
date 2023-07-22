@@ -45,11 +45,8 @@ require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 3002;
 
-const redisClient = redis.createClient({
-  host: process.env.REDIS_HOST,
-  port: process.env.REDIS_PORT,
-  password: process.env.REDIS_PASSWORD,
-});
+// Connect to Redis using the REDIS_URL environment variable provided by Render
+const redisClient = redis.createClient(process.env.REDIS_URL);
 
 const client = new Client();
 let qrCodeImage = null;
@@ -130,3 +127,6 @@ app.get('/', (req, res) => {
 const server = app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
+
+
+
