@@ -49,11 +49,11 @@ const client = new Client();
 let qrCodeImage = null;
 const conversations = new Map();
 
-// Connect to Redis using the connection details from render.com
+// Create a new Redis client
 const redisClient = redis.createClient({
-  host: process.env.REDIS_HOST,
-  port: process.env.REDIS_PORT,
-  password: process.env.REDIS_PASSWORD,
+  host: process.env.REDIS_HOST, // Replace with your Redis host
+  port: process.env.REDIS_PORT, // Replace with your Redis port
+  password: process.env.REDIS_PASSWORD, // Replace with your Redis password if applicable
 });
 
 client.on('qr', (qr) => {
@@ -124,6 +124,7 @@ app.get('/', (req, res) => {
 const server = app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
+
 
 
 
