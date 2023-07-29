@@ -96,7 +96,7 @@ async function runCompletion(whatsappNumber, message) {
 
   // Send the chat data to the Redis service
   try {
-    await axios.post('https://your-redis-service-url.com/store-chat-data', {
+    await axios.post('https://gt-7tqn.onrender.com/store-chat-data', {
       whatsappNumber,
       conversation,
     });
