@@ -35,10 +35,15 @@
 // })
 
 
+//I have 2 services running on render one as whatsapp chatbot and other as redis server for storing data, how can the data in array in chatbot could be send to redis service to store that data on render
+
+//Service 1 working as chatbot 
+
 const express = require('express');
 const { Client } = require('whatsapp-web.js');
 const qrcode = require('qrcode');
 const { Configuration, OpenAIApi } = require('openai');
+const axios = require('axios');
 require('dotenv').config();
 
 const app = express();
@@ -88,6 +93,16 @@ async function runCompletion(whatsappNumber, message) {
   // Update the conversation context for the WhatsApp number
   conversation.context = completion.data.choices[0].text;
   conversations.set(whatsappNumber, conversation);
+
+  // Send the chat data to the Redis service
+  try {
+    await axios.post('https://your-redis-service-url.com/store-chat-data', {
+      whatsappNumber,
+      conversation,
+    });
+  } catch (error) {
+    console.error('Error sending chat data to Redis:', error.message);
+  }
 
   return completion.data.choices[0].text;
 }
