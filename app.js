@@ -148,7 +148,7 @@ async function runCompletion(whatsappNumber, message) {
 
   // Send the chat data to the DB service
   try {
-    await axios.post('https://gt-7tqn.onrender.com/adhd', {
+    await axios.post('https://gt-7tqn.onrender.com/api/auth/addqa', {
       whatsappNumber,
       conversation: conversation.history,
     });
