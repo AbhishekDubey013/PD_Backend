@@ -129,11 +129,11 @@ const openai = new OpenAIApi(configuration);
 async function runCompletion(whatsappNumber, message) {
   // Get the conversation history and context for the WhatsApp number
   const conversation = conversations.get(whatsappNumber) || { history: [], context: '' };
-  
+
   // Store the latest message in the history and keep only the last 5 messages
   conversation.history.push(message);
   conversation.history = conversation.history.slice(-5);
-  
+
   const context = conversation.history.join('\n');
 
   const completion = await openai.createCompletion({
@@ -142,42 +142,18 @@ async function runCompletion(whatsappNumber, message) {
     max_tokens: 200,
   });
 
-//   // Update the conversation context for the WhatsApp number
-//   conversation.context = completion.data.choices[0].text;
-//   conversations.set(whatsappNumber, conversation);
+  try {
+    const userName = null; // Initialize userName to null
+    await axios.post('https://gt-7tqn.onrender.com/api/auth/store-sender-info', {
+      whatsappNumber,
+      userName,
+      conversation: conversation.history,
+    });
+  } catch (error) {
+    console.error('Error sending chat data to DB service:', error.message);
+  }
 
-//   // Send the chat data to the DB service
-//   try {
-//     await axios.post('https://gt-7tqn.onrender.com/api/auth/addqa', {
-//       whatsappNumber,
-//       conversation: conversation.history,
-//     });
-//   } catch (error) {
-//     console.error('Error sending chat data to DB service:', error.message);
-//   }
-
-//   return completion.data.choices[0].text;
-// }
-
-// try {
-//   const data = JSON.stringify(conversation.history); // Convert conversation history to JSON string
-//   const url = `https://gt-7tqn.onrender.com/api/auth/addqa?data=${encodeURIComponent(data)}`;
-//   await axios.post(url);
-// } catch (error) {
-//   console.error('Error sending chat data to DB service:', error.message);
-// }
-
-try {
-  await axios.post('https://gt-7tqn.onrender.com/api/auth//store-sender-info', {
-    whatsappNumber,
-    userName,
-    conversation: conversation.history,
-  });
-} catch (error) {
-  console.error('Error sending chat data to DB service:', error.message);
-}
-
-return completion.data.choices[0].text;
+  return completion.data.choices[0].text;
 }
 
 client.on('message', (message) => {
@@ -203,3 +179,4 @@ app.get('/', (req, res) => {
 const server = app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
+
