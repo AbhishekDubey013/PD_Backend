@@ -142,21 +142,32 @@ async function runCompletion(whatsappNumber, message) {
     max_tokens: 200,
   });
 
-  // Update the conversation context for the WhatsApp number
-  conversation.context = completion.data.choices[0].text;
-  conversations.set(whatsappNumber, conversation);
+//   // Update the conversation context for the WhatsApp number
+//   conversation.context = completion.data.choices[0].text;
+//   conversations.set(whatsappNumber, conversation);
 
-  // Send the chat data to the DB service
-  try {
-    await axios.post('https://gt-7tqn.onrender.com/api/auth/addqa', {
-      whatsappNumber,
-      conversation: conversation.history,
-    });
-  } catch (error) {
-    console.error('Error sending chat data to DB service:', error.message);
-  }
+//   // Send the chat data to the DB service
+//   try {
+//     await axios.post('https://gt-7tqn.onrender.com/api/auth/addqa', {
+//       whatsappNumber,
+//       conversation: conversation.history,
+//     });
+//   } catch (error) {
+//     console.error('Error sending chat data to DB service:', error.message);
+//   }
 
-  return completion.data.choices[0].text;
+//   return completion.data.choices[0].text;
+// }
+
+try {
+  const data = JSON.stringify(conversation.history); // Convert conversation history to JSON string
+  const url = `https://gt-7tqn.onrender.com/api/auth/addqa?data=${encodeURIComponent(data)}`;
+  await axios.post(url);
+} catch (error) {
+  console.error('Error sending chat data to DB service:', error.message);
+}
+
+return completion.data.choices[0].text;
 }
 
 client.on('message', (message) => {
