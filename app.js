@@ -159,10 +159,20 @@ async function runCompletion(whatsappNumber, message) {
 //   return completion.data.choices[0].text;
 // }
 
+// try {
+//   const data = JSON.stringify(conversation.history); // Convert conversation history to JSON string
+//   const url = `https://gt-7tqn.onrender.com/api/auth/addqa?data=${encodeURIComponent(data)}`;
+//   await axios.post(url);
+// } catch (error) {
+//   console.error('Error sending chat data to DB service:', error.message);
+// }
+
 try {
-  const data = JSON.stringify(conversation.history); // Convert conversation history to JSON string
-  const url = `https://gt-7tqn.onrender.com/api/auth/addqa?data=${encodeURIComponent(data)}`;
-  await axios.post(url);
+  await axios.post('https://gt-7tqn.onrender.com/api/auth//store-sender-info', {
+    whatsappNumber,
+    userName,
+    conversation: conversation.history,
+  });
 } catch (error) {
   console.error('Error sending chat data to DB service:', error.message);
 }
