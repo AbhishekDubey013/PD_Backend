@@ -143,7 +143,7 @@ async function runCompletion(whatsappNumber, message) {
   });
 
   try {
-    const userName = null; // Initialize userName to null
+    const userName = "jkjk"; // Initialize userName to null
     await axios.post('https://gt-7tqn.onrender.com/api/auth/store-sender-info', {
       whatsappNumber,
       userName,
