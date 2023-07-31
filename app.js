@@ -188,8 +188,8 @@ const express = require('express');
 const { Client } = require('whatsapp-web.js');
 const qrcode = require('qrcode');
 const { Configuration, OpenAIApi } = require('openai');
-require('dotenv').config();
 const axios = require('axios');
+require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 3002;
@@ -219,29 +219,12 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-// Local map to keep a copy of WhatsApp numbers, names, and last 5 messages
+// Local map to keep a copy of WhatsApp numbers, names, prompt, and last 5 messages
 const localConversations = new Map();
-
-// Create a new API endpoint to receive messages
-app.post('/receive-message', express.json(), (req, res) => {
-  const { whatsappNumber, userName, message } = req.body;
-
-  // Get the conversation for the WhatsApp number or initialize a new one
-  const conversation = localConversations.get(whatsappNumber) || { history: [], userName: null };
-
-  // Store the latest message in the history and keep only the last 5 messages
-  conversation.history.push(message);
-  conversation.history = conversation.history.slice(-5);
-
-  // Update the conversation in the local map
-  localConversations.set(whatsappNumber, { ...conversation, userName });
-
-  res.sendStatus(200);
-});
 
 async function runCompletion(whatsappNumber, message) {
   // Get the conversation history and context for the WhatsApp number
-  const conversation = localConversations.get(whatsappNumber) || { history: [], userName: null };
+  const conversation = localConversations.get(whatsappNumber) || { history: [], userName: null, prompt: null };
 
   // Store the latest message in the history and keep only the last 5 messages
   conversation.history.push(message);
@@ -268,6 +251,24 @@ client.on('message', (message) => {
   runCompletion(whatsappNumber, message.body).then((result) => {
     message.reply(result);
   });
+
+  // Check if the user is new and add data to the local copy if necessary
+  if (!localConversations.has(whatsappNumber)) {
+    const newConversation = { history: [message.body], userName: null, prompt: null };
+    localConversations.set(whatsappNumber, newConversation);
+    
+    // Add data to the database (you can use your API endpoint for this)
+    axios.post('https://gt-7tqn.onrender.com/api/auth/store-sender-info', {
+      whatsappNumber,
+      userName: null,
+      prompt: null,
+      history: [message.body],
+    }).then(() => {
+      console.log('New user data added to the database');
+    }).catch((error) => {
+      console.error('Error adding new user data to the database:', error.message);
+    });
+  }
 });
 
 app.get('/', (req, res) => {
@@ -282,14 +283,12 @@ app.get('/', (req, res) => {
 const syncInterval = 60 * 60 * 1000; // 1 hour
 setInterval(async () => {
   try {
-    for (const [whatsappNumber, conversation] of localConversations) {
-      const { userName, history } = conversation;
-      await axios.post('https://gt-7tqn.onrender.com/api/auth/store-sender-info', {
-        whatsappNumber,
-        userName,
-        conversation: history,
-      });
-    }
+    const { data } = await axios.get('https://gt-7tqn.onrender.com/api/auth//getQas');
+    const conversationsFromDB = data;
+    conversationsFromDB.forEach((conversationFromDB) => {
+      const { whatsappNumber, userName, prompt, history } = conversationFromDB;
+      localConversations.set(whatsappNumber, { userName, prompt, history });
+    });
     console.log('Local copy synced with the database');
   } catch (error) {
     console.error('Error syncing local copy with DB:', error.message);
@@ -300,3 +299,4 @@ setInterval(async () => {
 const server = app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
+
