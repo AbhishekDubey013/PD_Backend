@@ -93,6 +93,19 @@ app.get('/', (req, res) => {
   }
 });
 
+async function loadInitialDataFromDB() {
+  try {
+    const { data } = await axios.get('https://gt-7tqn.onrender.com/api/auth/getQas');
+    data.forEach((conversation) => {
+      const { whatsappNumber, userName, prompt, history } = conversation;
+      localConversations.set(whatsappNumber, { userName, prompt, history });
+    });
+    console.log('Initial data loaded from database into local copy.');
+  } catch (error) {
+    console.error('Error loading initial data from DB:', error.message);
+  }
+}
+
 //Sync local copy with the database every hour
 const syncInterval = 60 * 60 * 1000; // 1 hour
 setInterval(async () => {
@@ -112,5 +125,6 @@ setInterval(async () => {
 //Start the server and initialize the WhatsApp client
 const server = app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
+  loadInitialDataFromDB();
 });
 
