@@ -97,8 +97,8 @@ async function loadInitialDataFromDB() {
   try {
     const { data } = await axios.get('https://gt-7tqn.onrender.com/api/auth/getQas');
     data.forEach((conversation) => {
-      const { whatsappNumber, userName, prompt, history } = conversation;
-      localConversations.set(whatsappNumber, { userName, prompt, history });
+      const { whatsappNumber, userName, prompt } = conversation;
+      localConversations.set(whatsappNumber, { userName, prompt });
     });
     console.log('Initial data loaded from database into local copy.');
   } catch (error) {
