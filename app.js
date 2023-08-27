@@ -119,6 +119,7 @@ const { Client } = require('whatsapp-web.js');
 const qrcode = require('qrcode');
 const { Configuration, OpenAIApi } = require('openai');
 const axios = require('axios');
+const Bottleneck = require('bottleneck');
 require('dotenv').config();
 
 const app = express();
@@ -126,6 +127,10 @@ const port = process.env.PORT || 3002;
 
 const client = new Client();
 let qrCodeImage = null;
+
+const limiter = new Bottleneck({
+  minTime: 20000 // 20 seconds (3 requests per minute)
+});
 
 client.on('qr', (qr) => {
   qrcode.toDataURL(qr, { errorCorrectionLevel: 'L' }, (err, url) => {
@@ -159,20 +164,20 @@ async function runCompletion(whatsappNumber, message) {
   const additionalContext = "Your additional context here"; // Define your additional context
   const context = additionalContext + "\n" + conversation.history.join('\n');
 
-  try {
-      const completion = await openai.createCompletion({
-          model: 'text-davinci-003',
-          prompt: context,
-          max_tokens: 200,
-      });
-      return completion.data.choices[0].text;
-  } catch (error) {
+  return limiter.schedule(() => {
+    return openai.createCompletion({
+      model: 'text-davinci-003',
+      prompt: context,
+      max_tokens: 200,
+    }).then(completion => completion.data.choices[0].text)
+    .catch(error => {
       console.error('OpenAI API Error:', error.message);
       if (error.response && error.response.status === 429) {
-          return 'I am receiving too many requests. Please try again later.';
+        return 'I am receiving too many requests. Please try again later.';
       }
       return 'Sorry, I am currently facing some issues. Please try again later.';
-  }
+    });
+  });
 }
 
 client.on('message', (message) => {
@@ -217,8 +222,8 @@ setInterval(async () => {
     const { data } = await axios.get('https://gt-7tqn.onrender.com/api/auth/getQas');
     const conversationsFromDB = data;
     conversationsFromDB.forEach((conversationFromDB) => {
-      const { whatsappNumber, userName, prompt} = conversationFromDB;
-      localConversations.set(whatsappNumber, { userName, prompt});
+      const { whatsappNumber, userName, prompt } = conversationFromDB;
+      localConversations.set(whatsappNumber, { userName, prompt });
     });
     console.log('Local copy synced with the database');
   } catch (error) {
