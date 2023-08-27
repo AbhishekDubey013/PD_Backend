@@ -186,23 +186,23 @@ client.on('message', (message) => {
     message.reply(result);
   });
 
-  // Check if the user is new and add data to the local copy if necessary
-  // if (!localConversations.has(whatsappNumber)) {
-  //   const newConversation = { history: [message.body], userName: null, prompt: null };
-  //   localConversations.set(whatsappNumber, newConversation);
+  //Check if the user is new and add data to the local copy if necessary
+  if (!localConversations.has(whatsappNumber)) {
+    const newConversation = { history: [message.body], userName: null, prompt: null };
+    localConversations.set(whatsappNumber, newConversation);
     
-  //   // Add data to the database (you can use your API endpoint for this)
-  //   axios.post('https://gt-7tqn.onrender.com/api/auth/store-sender-info', {
-  //     whatsappNumber,
-  //     userName: null,
-  //     prompt: null,
-  //     history: [message.body],
-  //   }).then(() => {
-  //     console.log('New user data added to the database');
-  //   }).catch((error) => {
-  //     console.error('Error adding new user data to the database:', error.message);
-  //   });
-  // }
+    // Add data to the database (you can use your API endpoint for this)
+    axios.post('https://gt-7tqn.onrender.com/api/auth/store-sender-info', {
+      whatsappNumber,
+      userName: null,
+      prompt: null,
+      history: [message.body],
+    }).then(() => {
+      console.log('New user data added to the database');
+    }).catch((error) => {
+      console.error('Error adding new user data to the database:', error.message);
+    });
+  }
 });
 
 app.get('/', (req, res) => {
@@ -213,23 +213,23 @@ app.get('/', (req, res) => {
   }
 });
 
-// Sync local copy with the database every hour
-// const syncInterval = 60 * 60 * 1000; // 1 hour
-// setInterval(async () => {
-//   try {
-//     const { data } = await axios.get('https://gt-7tqn.onrender.com/api/auth/getQas');
-//     const conversationsFromDB = data;
-//     conversationsFromDB.forEach((conversationFromDB) => {
-//       const { whatsappNumber, userName, prompt, history } = conversationFromDB;
-//       localConversations.set(whatsappNumber, { userName, prompt, history });
-//     });
-//     console.log('Local copy synced with the database');
-//   } catch (error) {
-//     console.error('Error syncing local copy with DB:', error.message);
-//   }
-// }, syncInterval);
+//Sync local copy with the database every hour
+const syncInterval = 60 * 60 * 1000; // 1 hour
+setInterval(async () => {
+  try {
+    const { data } = await axios.get('https://gt-7tqn.onrender.com/api/auth/getQas');
+    const conversationsFromDB = data;
+    conversationsFromDB.forEach((conversationFromDB) => {
+      const { whatsappNumber, userName, prompt, history } = conversationFromDB;
+      localConversations.set(whatsappNumber, { userName, prompt, history });
+    });
+    console.log('Local copy synced with the database');
+  } catch (error) {
+    console.error('Error syncing local copy with DB:', error.message);
+  }
+}, syncInterval);
 
-// Start the server and initialize the WhatsApp client
+//Start the server and initialize the WhatsApp client
 const server = app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
