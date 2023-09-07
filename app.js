@@ -49,6 +49,17 @@ syncWithDatabase().catch(err => {
   console.error('Initial sync failed:', err);
 });
 
+async function generateNewPrompt(history, oldPrompt) {
+  const context = `Analyze the user's chat history to understand their preferences and behavior. Then, compare it with the existing prompt to generate a new one. \nChat History: ${history.join('\n')}\nExisting Prompt: ${oldPrompt}`;
+  const completion = await openai.createCompletion({
+    model: 'text-davinci-003',
+    prompt: context,
+    max_tokens: 50,
+  });
+  return completion.data.choices[0].text.trim();
+}
+
+
 async function runCompletion(whatsappNumber, message) {
   try {
     let conversation = localConversations.get(whatsappNumber) || { history: [], userName: null, prompt: null };
@@ -113,6 +124,24 @@ app.get('/', (req, res) => {
 
 const syncInterval = 60 * 60 * 1000; // 1 hour
 setInterval(syncWithDatabase, syncInterval);
+
+setInterval(async () => {
+  for (const [whatsappNumber, conversation] of localConversations.entries()) {
+    const newPrompt = await generateNewPrompt(conversation.history, conversation.prompt);
+    conversation.prompt = newPrompt;
+
+    // Update local storage
+    localConversations.set(whatsappNumber, conversation);
+
+    // Update remote database
+    await axios.post('https://gt-7tqn.onrender.com/api/auth/updatePrompt', {
+      whatsappNumber,
+      newPrompt,
+    }, {
+      timeout: 5000,
+    });
+  }
+}, syncInterval);
 
 const server = app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
