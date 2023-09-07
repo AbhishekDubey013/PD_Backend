@@ -71,7 +71,6 @@ client.on('message', async (message) => {
         whatsappNumber,
         userName: null,
         prompt: null,
-        history: [message.body],
       }, {
         timeout: 5000,
       });
