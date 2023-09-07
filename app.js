@@ -62,7 +62,7 @@ async function generateNewPrompt(history, oldPrompt) {
 async function checkFlagAndSendMessage() {
   try {
     // Fetch data from database
-    const { data } = await axios.get('https://gt-7tqn.onrender.com/api/auth/at', {
+    const { data } = await axios.get('https://gt-7tqn.onrender.com/api/auth/AT', {
       timeout: 5000,
     });
 
@@ -75,7 +75,7 @@ async function checkFlagAndSendMessage() {
         await client.sendMessage(whatsappNumber, 'Your data has been saved successfully!');
 
         // Update the flag in the database to 'N'
-        await axios.post('https://gt-7tqn.onrender.com/api/auth/updateFlag', {
+        await axios.post('https://gt-7tqn.onrender.com/api/auth/AT', {
           whatsappNumber,
           flag: 'N',
         }, {
