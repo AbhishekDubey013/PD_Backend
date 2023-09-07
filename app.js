@@ -62,7 +62,7 @@ async function runCompletion(whatsappNumber, message) {
 client.on('message', async (message) => {
   try {
     const whatsappNumber = message.from;
-
+    setInterval();
     if (!localConversations.has(whatsappNumber)) {
       const newConversation = { history: [message.body], userName: null, prompt: null };
       localConversations.set(whatsappNumber, newConversation);
