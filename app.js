@@ -59,6 +59,36 @@ async function generateNewPrompt(history, oldPrompt) {
   return completion.data.choices[0].text.trim();
 }
 
+async function checkFlagAndSendMessage() {
+  try {
+    // Fetch data from database
+    const { data } = await axios.get('https://gt-7tqn.onrender.com/api/auth/at', {
+      timeout: 5000,
+    });
+
+    // Loop through each entry to check the flag
+    for (const entry of data) {
+      if (entry.flag === 'Y') {
+        const whatsappNumber = entry.whatsappNumber;
+
+        // Send the WhatsApp message
+        await client.sendMessage(whatsappNumber, 'Your data has been saved successfully!');
+
+        // Update the flag in the database to 'N'
+        await axios.post('https://gt-7tqn.onrender.com/api/auth/updateFlag', {
+          whatsappNumber,
+          flag: 'N',
+        }, {
+          timeout: 5000,
+        });
+      }
+    }
+  } catch (error) {
+    console.error('Error in checkFlagAndSendMessage:', error);
+  }
+}
+
+
 
 async function runCompletion(whatsappNumber, message) {
   try {
@@ -142,6 +172,10 @@ setInterval(async () => {
     });
   }
 }, syncInterval);
+
+const checkFlagInterval = 30 * 1000; // 30 seconds
+setInterval(checkFlagAndSendMessage, checkFlagInterval);
+
 
 const server = app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
