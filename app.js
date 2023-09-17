@@ -49,48 +49,6 @@ syncWithDatabase().catch(err => {
   console.error('Initial sync failed:', err);
 });
 
-async function generateNewPrompt(history, oldPrompt) {
-  const context = `Analyze the user's chat history to understand their preferences and behavior. Then, compare it with the existing prompt to generate a new one. \nChat History: ${history.join('\n')}\nExisting Prompt: ${oldPrompt}`;
-  const completion = await openai.createCompletion({
-    model: 'text-davinci-003',
-    prompt: context,
-    max_tokens: 50,
-  });
-  return completion.data.choices[0].text.trim();
-}
-
-// async function checkFlagAndSendMessage() {
-//   try {
-//     // Fetch data from database
-//     const { data } = await axios.get('https://gt-7tqn.onrender.com/api/auth/adh', {
-//       timeout: 5000,
-//     });
-
-//     // Loop through each entry to check the flag
-//     for (const entry of data) {
-//       if (entry.flag === 'Y') {
-//         const whatsappNumber = entry.mobileNumber;
-//         const formattedPhoneNumber = `91${whatsappNumber}@c.us`;
-//         console.log(entry.flag)
-
-
-//         // Update the flag in the database to 'N'
-//         await axios.put('https://gt-7tqn.onrender.com/api/auth/up', {
-//           mobileNumber: whatsappNumber,
-//           newFlag: 'N'
-//         }, {
-//           timeout: 5000,
-//         });
-
-//         // Send the WhatsApp message
-//         await client.sendMessage(formattedPhoneNumber, 'Your data has been saved successfully!');
-//       }
-//     }
-//   } catch (error) {
-//     console.error('Error in checkFlagAndSendMessage:', error);
-//   }
-// }
-
 
 async function checkFlagAndSendMessage() {
   try {
@@ -100,29 +58,29 @@ async function checkFlagAndSendMessage() {
     });
 
     // Loop through each entry to check the flag
-    // No need to check for 'Y' flag because API is now only returning those entries
     for (const entry of data) {
-      const whatsappNumber = entry.mobileNumber;
-      const formattedPhoneNumber = `91${whatsappNumber}@c.us`;
+      if (entry.flag === 'Y') {
+        const whatsappNumber = entry.mobileNumber;
+        const formattedPhoneNumber = `91${whatsappNumber}@c.us`;
+        console.log(entry.flag)
 
-      // Send the WhatsApp message
-      // await client.sendMessage(formattedPhoneNumber, 'Your data has been saved successfully!');
-      
-      // Update the flag in the database to 'N'
-      await axios.put('https://gt-7tqn.onrender.com/api/auth/up', {
-        mobileNumber: whatsappNumber, // Updating flag using ObjectId instead of mobileNumber
-        newFlag: 'N'
-      }, {
-        timeout: 5000,
-      });
 
+        // Update the flag in the database to 'N'
+        await axios.put('https://gt-7tqn.onrender.com/api/auth/up', {
+          mobileNumber: whatsappNumber,
+          newFlag: 'N'
+        }, {
+          timeout: 5000,
+        });
+
+        // Send the WhatsApp message
+        await client.sendMessage(formattedPhoneNumber, 'Your data has been saved successfully!');
+      }
     }
   } catch (error) {
     console.error('Error in checkFlagAndSendMessage:', error);
   }
 }
-
-
 
 
 async function runCompletion(whatsappNumber, message) {
@@ -197,14 +155,6 @@ setInterval(async () => {
 
     // Update local storage
     localConversations.set(whatsappNumber, conversation);
-
-    // Update remote database
-    await axios.post('https://gt-7tqn.onrender.com/api/auth/updatePrompt', {
-      whatsappNumber,
-      newPrompt,
-    }, {
-      timeout: 5000,
-    });
   }
 }, syncInterval);
 
