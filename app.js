@@ -150,8 +150,6 @@ setInterval(syncWithDatabase, syncInterval);
 
 setInterval(async () => {
   for (const [whatsappNumber, conversation] of localConversations.entries()) {
-    const newPrompt = await generateNewPrompt(conversation.history, conversation.prompt);
-    conversation.prompt = newPrompt;
 
     // Update local storage
     localConversations.set(whatsappNumber, conversation);
