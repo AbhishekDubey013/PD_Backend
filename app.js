@@ -56,18 +56,17 @@ async function checkFlagAndSendMessage() {
     const { data } = await axios.get('https://gt-7tqn.onrender.com/api/auth/adh', {
       timeout: 5000,
     });
-
+    console.log(data);
     // Loop through each entry to check the flag
     for (const entry of data) {
-      if (entry.flag === 'Y') {
         const whatsappNumber = entry.mobileNumber;
         const formattedPhoneNumber = `91${whatsappNumber}@c.us`;
-        console.log(entry.flag)
+        console.log(entry.mobileNumber)
 
 
         // Update the flag in the database to 'N'
         await axios.put('https://gt-7tqn.onrender.com/api/auth/up', {
-          mobileNumber: whatsappNumber,
+          _id: entry._id,
           newFlag: 'N'
         }, {
           timeout: 5000,
@@ -75,7 +74,6 @@ async function checkFlagAndSendMessage() {
 
         // Send the WhatsApp message
         await client.sendMessage(formattedPhoneNumber, 'Your data has been saved successfully!');
-      }
     }
   } catch (error) {
     console.error('Error in checkFlagAndSendMessage:', error);
