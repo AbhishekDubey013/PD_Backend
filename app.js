@@ -83,42 +83,42 @@ syncWithDatabase().catch(err => {
 
 async function checkFlagAndSendMessage() {
   try {
-    // Fetch data from database
-    const { data } = await axios.get('https://gt-7tqn.onrender.com/api/auth/adh', {
-      timeout: 5000,
-    });
+    console.log("Fetching data from API...");
+    const { data } = await axios.get('https://gt-7tqn.onrender.com/api/auth/adh', { timeout: 5000 });
+    console.log("Data received:", data);
 
     for (const entry of data) {
+      console.log("Processing entry:", entry);
       if (entry.flag === 'Y') {
         const combinedString = entry.dataArray.map((response, index) => `${questions[index]}: ${response}`).join('\n');
-        console.log(ombinedString)
-        // Call OpenAI API with the combined string
+        console.log("Combined string:", combinedString);
+
         const completion = await openai.createCompletion({
           model: 'text-davinci-003',
           prompt: combinedString,
           max_tokens: 200,
         });
-
+        console.log("OpenAI response:", completion.data.choices[0].text);
+        
         const analysisResult = completion.data.choices[0].text;
         const whatsappNumber = entry.mobileNumber;
         const formattedPhoneNumber = `91${whatsappNumber}@c.us`;
-
-        // Update the flag in the database to 'N'
-        await axios.put('https://gt-7tqn.onrender.com/api/auth/up', {
+        
+        const updateResponse = await axios.put('https://gt-7tqn.onrender.com/api/auth/up', {
           _id: entry._id,
           newFlag: 'N'
-        }, {
-          timeout: 5000,
-        });
+        }, { timeout: 5000 });
+        console.log("Database update response:", updateResponse.data);
 
-        // Send the WhatsApp message with OpenAI's response
         await client.sendMessage(formattedPhoneNumber, analysisResult);
+        console.log("Message sent to:", formattedPhoneNumber);
       }
     }
   } catch (error) {
     console.error('Error in checkFlagAndSendMessage:', error);
   }
 }
+
 
 
 async function runCompletion(whatsappNumber, message) {
