@@ -67,7 +67,7 @@ async function checkFlagAndSendMessage() {
         // Update the flag in the database to 'N'
         await axios.put('https://gt-7tqn.onrender.com/api/auth/up', {
           _id: entry._id,
-          newFlag: 'vvvv'
+          newFlag: 'N'
         }, {
           timeout: 5000,
         });
