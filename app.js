@@ -157,7 +157,7 @@ const { Client } = require('whatsapp-web.js');
 const qrcode = require('qrcode');
 const { Configuration, OpenAIApi } = require('openai');
 const axios = require('axios');
-import questionsData from './personal.json';
+import questionsData from './whatsappbot/personal.json';
 const questions = questionsData.questions;
 require('dotenv').config();
 
