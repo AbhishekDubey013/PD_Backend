@@ -157,7 +157,7 @@ const { Client } = require('whatsapp-web.js');
 const qrcode = require('qrcode');
 const { Configuration, OpenAIApi } = require('openai');
 const axios = require('axios');
-import questionsData from './whatsappbot/personal.json';
+const questionsData = require('./whatsappbot/personal.json');
 const questions = questionsData.questions;
 require('dotenv').config();
 
@@ -338,8 +338,8 @@ app.get('/', (req, res) => {
 });
 
 
-setInterval(syncWithDatabase, syncInterval);
-setInterval(checkFlagAndSendMessage, checkFlagInterval);
+//setInterval(syncWithDatabase, syncInterval);
+//setInterval(checkFlagAndSendMessage, checkFlagInterval);
 
 
 const server = app.listen(port, () => {
