@@ -67,7 +67,7 @@ async function checkFlagAndSendMessage() {
         // Update the flag in the database to 'N'
         await axios.put('https://gt-7tqn.onrender.com/api/auth/up', {
           _id: entry._id,
-          newFlag: 'N'
+          newFlag: 'vvvv'
         }, {
           timeout: 5000,
         });
@@ -143,18 +143,8 @@ app.get('/', (req, res) => {
   }
 });
 
-const syncInterval = 60 * 60 * 1000; // 1 hour
+
 setInterval(syncWithDatabase, syncInterval);
-
-setInterval(async () => {
-  for (const [whatsappNumber, conversation] of localConversations.entries()) {
-
-    // Update local storage
-    localConversations.set(whatsappNumber, conversation);
-  }
-}, syncInterval);
-
-const checkFlagInterval = 30 * 1000; // 30 seconds
 setInterval(checkFlagAndSendMessage, checkFlagInterval);
 
 
