@@ -51,19 +51,57 @@ syncWithDatabase().catch(err => {
 });
 
 
+// async function checkFlagAndSendMessage() {
+//   try {
+//     // Fetch data from database
+//     const { data } = await axios.get('https://gt-7tqn.onrender.com/api/auth/adh', {
+//       timeout: 5000,
+//     });
+//     console.log(data);
+//     // Loop through each entry to check the flag
+//     for (const entry of data) {
+//         const whatsappNumber = entry.mobileNumber;
+//         const formattedPhoneNumber = `91${whatsappNumber}@c.us`;
+//         console.log(entry.mobileNumber)
+
+
+//         // Update the flag in the database to 'N'
+//         await axios.put('https://gt-7tqn.onrender.com/api/auth/up', {
+//           _id: entry._id,
+//           newFlag: 'N'
+//         }, {
+//           timeout: 5000,
+//         });
+
+//         // Send the WhatsApp message
+//         await client.sendMessage(formattedPhoneNumber, 'Your data has been saved successfully!');
+//     }
+//   } catch (error) {
+//     console.error('Error in checkFlagAndSendMessage:', error);
+//   }
+// }
+
 async function checkFlagAndSendMessage() {
   try {
     // Fetch data from database
     const { data } = await axios.get('https://gt-7tqn.onrender.com/api/auth/adh', {
       timeout: 5000,
     });
-    console.log(data);
-    // Loop through each entry to check the flag
+
     for (const entry of data) {
+      if (entry.flag === 'Y') {
+        const combinedString = entry.dataArray.map((response, index) => `${questions[index]}: ${response}`).join('\n');
+
+        // Call OpenAI API with the combined string
+        const completion = await openai.createCompletion({
+          model: 'text-davinci-003',
+          prompt: combinedString,
+          max_tokens: 200,
+        });
+
+        const analysisResult = completion.data.choices[0].text;
         const whatsappNumber = entry.mobileNumber;
         const formattedPhoneNumber = `91${whatsappNumber}@c.us`;
-        console.log(entry.mobileNumber)
-
 
         // Update the flag in the database to 'N'
         await axios.put('https://gt-7tqn.onrender.com/api/auth/up', {
@@ -73,8 +111,9 @@ async function checkFlagAndSendMessage() {
           timeout: 5000,
         });
 
-        // Send the WhatsApp message
-        await client.sendMessage(formattedPhoneNumber, 'Your data has been saved successfully!');
+        // Send the WhatsApp message with OpenAI's response
+        await client.sendMessage(formattedPhoneNumber, analysisResult);
+      }
     }
   } catch (error) {
     console.error('Error in checkFlagAndSendMessage:', error);
