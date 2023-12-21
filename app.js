@@ -159,6 +159,8 @@ const { Configuration, OpenAIApi } = require('openai');
 const axios = require('axios');
 const questionsData = require('./whatsappbot/personal.json');
 const questions = questionsData.questions;
+const syncInterval = 10000; // 10 seconds
+const checkFlagInterval = 15000; // 15 seconds
 require('dotenv').config();
 
 const app = express();
@@ -205,36 +207,6 @@ syncWithDatabase().catch(err => {
   console.error('Initial sync failed:', err);
 });
 
-
-// async function checkFlagAndSendMessage() {
-//   try {
-//     // Fetch data from database
-//     const { data } = await axios.get('https://gt-7tqn.onrender.com/api/auth/adh', {
-//       timeout: 5000,
-//     });
-//     console.log(data);
-//     // Loop through each entry to check the flag
-//     for (const entry of data) {
-//         const whatsappNumber = entry.mobileNumber;
-//         const formattedPhoneNumber = `91${whatsappNumber}@c.us`;
-//         console.log(entry.mobileNumber)
-
-
-//         // Update the flag in the database to 'N'
-//         await axios.put('https://gt-7tqn.onrender.com/api/auth/up', {
-//           _id: entry._id,
-//           newFlag: 'N'
-//         }, {
-//           timeout: 5000,
-//         });
-
-//         // Send the WhatsApp message
-//         await client.sendMessage(formattedPhoneNumber, 'Your data has been saved successfully!');
-//     }
-//   } catch (error) {
-//     console.error('Error in checkFlagAndSendMessage:', error);
-//   }
-// }
 
 async function checkFlagAndSendMessage() {
   try {
@@ -338,8 +310,8 @@ app.get('/', (req, res) => {
 });
 
 
-//setInterval(syncWithDatabase, syncInterval);
-//setInterval(checkFlagAndSendMessage, checkFlagInterval);
+setInterval(syncWithDatabase, syncInterval);
+setInterval(checkFlagAndSendMessage, checkFlagInterval);
 
 
 const server = app.listen(port, () => {
