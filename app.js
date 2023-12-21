@@ -30,25 +30,25 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-async function syncWithDatabase() {
-  try {
-    const { data } = await axios.get('https://gt-7tqn.onrender.com/api/auth/getQas', {
-      timeout: 5000,
-    });
-    data.forEach(({ whatsappNumber, userName, prompt, history }) => {
-      localConversations.set(whatsappNumber, { userName, prompt, history });
-    });
-    console.log('Local copy synced with the database');
-  } catch (error) {
-    console.error('Error syncing local copy with DB:', error);
-  }
-}
+// async function syncWithDatabase() {
+//   try {
+//     const { data } = await axios.get('https://gt-7tqn.onrender.com/api/auth/getQas', {
+//       timeout: 5000,
+//     });
+//     data.forEach(({ whatsappNumber, userName, prompt, history }) => {
+//       localConversations.set(whatsappNumber, { userName, prompt, history });
+//     });
+//     console.log('Local copy synced with the database');
+//   } catch (error) {
+//     console.error('Error syncing local copy with DB:', error);
+//   }
+// }
 
-const localConversations = new Map();
+// const localConversations = new Map();
 
-syncWithDatabase().catch(err => {
-  console.error('Initial sync failed:', err);
-});
+// syncWithDatabase().catch(err => {
+//   console.error('Initial sync failed:', err);
+// });
 
 
 // async function checkFlagAndSendMessage() {
@@ -184,7 +184,7 @@ app.get('/', (req, res) => {
 });
 
 
-setInterval(syncWithDatabase, syncInterval);
+// setInterval(syncWithDatabase, syncInterval);
 setInterval(checkFlagAndSendMessage, checkFlagInterval);
 
 
