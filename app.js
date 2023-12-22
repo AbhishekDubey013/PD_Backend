@@ -10,7 +10,8 @@ const app = express();
 const port = process.env.PORT || 3002;
 const client = new Client();
 let qrCodeImage = null;
-
+const questionsData = require('./whatsappbot/question.json');
+const questions = questionsData.questions;
 client.on('qr', async (qr) => {
   try {
     qrCodeImage = await qrcode.toDataURL(qr, { errorCorrectionLevel: 'L' });
@@ -89,7 +90,6 @@ async function checkFlagAndSendMessage() {
 
     for (const entry of data) {
       console.log("Processing entry:", entry);
-      if (entry.flag === 'Y') {
         const combinedString = entry.dataArray.map((response, index) => `${questions[index]}: ${response}`).join('\n');
         console.log("Combined string:", combinedString);
 
@@ -112,7 +112,6 @@ async function checkFlagAndSendMessage() {
 
         await client.sendMessage(formattedPhoneNumber, analysisResult);
         console.log("Message sent to:", formattedPhoneNumber);
-      }
     }
   } catch (error) {
     console.error('Error in checkFlagAndSendMessage:', error);
