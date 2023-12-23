@@ -90,9 +90,10 @@ async function checkFlagAndSendMessage() {
 
     for (const entry of data) {
       console.log("Processing entry:", entry);
-        let combinedString = entry.dataArray.map((response, index) => `${questions[index]}: ${response}`).join('\n');
+      let introduction = "These are the responses to a psychological test assessment. Please review and give your view on the following answers:";
+      let combinedString = introduction + "\n\n" + entry.dataArray.map((response, index) => `${questions[index]}: ${response}`).join('\n');      
         console.log("Combined string:", combinedString);
-        combinedString = "How are you?";
+        // combinedString = "How are you?";
         const completion = await openai.createCompletion({
           model: 'text-davinci-003',
           prompt: combinedString,
