@@ -100,7 +100,7 @@ async function checkFlagAndSendMessage() {
         });
         // console.log("OpenAI response:", completion.data.choices[0].text);
 
-        console.log("OpenAI response:", completion);
+        console.log("OpenAI response:", completion.data.choices[0]);
         
         const analysisResult = completion.data.choices[0].text;
         const whatsappNumber = entry.mobileNumber;
