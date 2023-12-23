@@ -92,7 +92,7 @@ async function checkFlagAndSendMessage() {
       console.log("Processing entry:", entry);
         const combinedString = entry.dataArray.map((response, index) => `${questions[index]}: ${response}`).join('\n');
         console.log("Combined string:", combinedString);
-
+        combinedString = "How are you?";
         const completion = await openai.createCompletion({
           model: 'text-davinci-003',
           prompt: combinedString,
@@ -100,7 +100,7 @@ async function checkFlagAndSendMessage() {
         });
         // console.log("OpenAI response:", completion.data.choices[0].text);
 
-        console.log("OpenAI response:", completion.data.choices[0]);
+        console.log("OpenAI response:", completion.data.choices[0].text);
         
         const analysisResult = completion.data.choices[0].text;
         const whatsappNumber = entry.mobileNumber;
