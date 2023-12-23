@@ -98,7 +98,9 @@ async function checkFlagAndSendMessage() {
           prompt: combinedString,
           max_tokens: 200,
         });
-        console.log("OpenAI response:", completion.data.choices[0].text);
+        // console.log("OpenAI response:", completion.data.choices[0].text);
+
+        console.log("OpenAI response:", completion);
         
         const analysisResult = completion.data.choices[0].text;
         const whatsappNumber = entry.mobileNumber;
