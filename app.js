@@ -96,7 +96,7 @@ async function checkFlagAndSendMessage() {
       console.log("hello",entry)
       const data1 = response.data;
       console.log("Data received:", data1);
-      let introduction = "These are the responses to a psychological test assessment (ADHD). Please review and give your view on the following answers LIKE A PSYCHOLOGIST ALSO TELL THE PROBABILITY % OF IT:";
+      let introduction = "These are the responses to a psychological test assessment (ADHD). Please review and give your view on the following answers LIKE A PSYCHOLOGIST ALSO TELL THE PROBABILITY % OF IT also present your data inreport format:";
       let combinedString = introduction + "\n\n" + entry.dataArray.map((response, index) => `${question[index]}: ${response}`).join('\n') + "\n" + data1[0].dataArray.map((response, index) => `${questions[index]}: ${response}`).join('\n');      
 
       console.log("Combined string:", combinedString);
