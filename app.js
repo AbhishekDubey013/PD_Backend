@@ -11,7 +11,9 @@ const port = process.env.PORT || 3002;
 const client = new Client();
 let qrCodeImage = null;
 const questionsData = require('./whatsappbot/question.json');
+const pers = require('./whatsappbot/personal.json');
 const questions = questionsData.questions;
+const question = pers.questions;
 client.on('qr', async (qr) => {
   try {
     qrCodeImage = await qrcode.toDataURL(qr, { errorCorrectionLevel: 'L' });
@@ -85,13 +87,14 @@ const openai = new OpenAIApi(configuration);
 async function checkFlagAndSendMessage() {
   try {
     console.log("Fetching data from API...");
-    const { data } = await axios.get('https://gt-7tqn.onrender.com/api/auth/adh', { timeout: 5000 });
+    const { data } = await axios.get('https://gt-7tqn.onrender.com/api/auth/pdh', { timeout: 5000 });
     console.log("Data received:", data);
 
     for (const entry of data) {
       console.log("Processing entry:", entry);
+      const { data1 } = await axios.get('https://gt-7tqn.onrender.com/api/auth/adh?PK=${entry.PK}', { timeout: 5000 });
       let introduction = "These are the responses to a psychological test assessment(ADHD). Please review and give your view on the following answers LIKE A PSYCOLOGIST ALSO TELL THE PROABILITY % OF IT:";
-      let combinedString = introduction + "\n\n" + entry.dataArray.map((response, index) => `${questions[index]}: ${response}`).join('\n');      
+      let combinedString = introduction + "\n\n" + data1.dataArray.map((response, index) => `${questions[index]}: ${response}`) + entry.dataArray.map((response, index) => `${question[index]}: ${response}`).join('\n');      
         console.log("Combined string:", combinedString);
         // combinedString = "How are you?";
         const completion = await openai.createCompletion({
