@@ -92,38 +92,39 @@ async function checkFlagAndSendMessage() {
 
     for (const entry of data) {
       console.log("Processing entry:", entry);
-      const { data1 } = await axios.get('https://gt-7tqn.onrender.com/api/auth/adh?PK=${entry.PK}', { timeout: 5000 });
-      let introduction = "These are the responses to a psychological test assessment(ADHD). Please review and give your view on the following answers LIKE A PSYCOLOGIST ALSO TELL THE PROABILITY % OF IT:";
-      let combinedString = introduction + "\n\n" + data1.dataArray.map((response, index) => `${questions[index]}: ${response}`) + entry.dataArray.map((response, index) => `${question[index]}: ${response}`).join('\n');      
-        console.log("Combined string:", combinedString);
-        // combinedString = "How are you?";
-        const completion = await openai.createCompletion({
-          model: 'text-davinci-003',
-          prompt: combinedString,
-          max_tokens: 200,
-        });
-        // console.log("OpenAI response:", completion.data.choices[0].text);
+      const response = await axios.get(`https://gt-7tqn.onrender.com/api/auth/adh?PK=${entry.PK}`, { timeout: 5000 });
+      const data1 = response.data;
 
-        console.log("OpenAI response:", completion.data.choices[0].text);
-        
-        const analysisResult = completion.data.choices[0].text;
-        const whatsappNumber = entry.mobileNumber;
-        const formattedPhoneNumber = `91${whatsappNumber}@c.us`;
-        
-        const updateResponse = await axios.put('https://gt-7tqn.onrender.com/api/auth/up', {
-          _id: entry._id,
-          newFlag: 'N'
-        }, { timeout: 5000 });
-        console.log("Database update response:", updateResponse.data);
+      let introduction = "These are the responses to a psychological test assessment (ADHD). Please review and give your view on the following answers LIKE A PSYCHOLOGIST ALSO TELL THE PROBABILITY % OF IT:";
+      let combinedString = introduction + "\n\n" + data1.dataArray.map((response, index) => `${questions[index]}: ${response}`).join('\n') + "\n" + entry.dataArray.map((response, index) => `${question[index]}: ${response}`).join('\n');      
 
-        await client.sendMessage(formattedPhoneNumber, analysisResult);
-        console.log("Message sent to:", formattedPhoneNumber);
+      console.log("Combined string:", combinedString);
+      
+      const completion = await openai.createCompletion({
+        model: 'text-davinci-003',
+        prompt: combinedString,
+        max_tokens: 200,
+      });
+
+      console.log("OpenAI response:", completion.data.choices[0].text);
+      
+      const analysisResult = completion.data.choices[0].text;
+      const whatsappNumber = entry.mobileNumber;
+      const formattedPhoneNumber = `91${whatsappNumber}@c.us`;
+      
+      const updateResponse = await axios.put('https://gt-7tqn.onrender.com/api/auth/pp', {
+        _id: entry._id,
+        newFlag: 'N'
+      }, { timeout: 5000 });
+      console.log("Database update response:", updateResponse.data);
+
+      await client.sendMessage(formattedPhoneNumber, analysisResult);
+      console.log("Message sent to:", formattedPhoneNumber);
     }
   } catch (error) {
     console.error('Error in checkFlagAndSendMessage:', error);
   }
 }
-
 
 
 async function runCompletion(whatsappNumber, message) {
