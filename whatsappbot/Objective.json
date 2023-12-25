@@ -22,5 +22,65 @@
   "How often have you had trouble concentrating on things, like reading or watching television?",
   "How often have you been moving or speaking so slowly that other people could have noticed, or the opposite - being so fidgety or restless that you have been moving around a lot more than usual?",
   "How often have you had thoughts that you would be better off dead, or thoughts of hurting yourself in some way?"
+    ],
+    "OCD": [
+      "Do you wash or clean a lot?",
+      "Do you check things a lot?",
+      "Is there any thought that keeps bothering you that you would like to get rid of but can't?",
+      "Do your daily activities take a long time to finish because of these behaviors?",
+      "Are you concerned about orderliness or symmetry?",
+      "Do these behaviors cause you a lot of distress?",
+      "Do you feel you have to perform certain rituals?",
+      "Do you worry about dirt or germs?",
+      "Do you need to have things arranged in a particular way?",
+      "Do these issues interfere with your social life or relationships?"
+    ],
+    "BipolarDisorder": [
+      "Have you ever felt unusually excited or hyper?",
+      "Do you have periods where you feel overly irritable?",
+      "Have you engaged in risky behaviors that you later regretted?",
+      "Do you have phases where you feel more talkative or outgoing than usual?",
+      "Do you sometimes feel unusually important or talented?",
+      "Do you experience dramatic mood swings?",
+      "Have you had periods of increased energy or activity?",
+      "Do you find yourself needing significantly less sleep?",
+      "Have you ever felt like your thoughts were racing?",
+      "Do you ever feel like you can do anything?"
+    ],
+    "PTSD": [
+      "Have you experienced or witnessed a traumatic event?",
+      "Do you have recurrent thoughts or dreams about the event?",
+      "Do you avoid situations that remind you of the traumatic event?",
+      "Do you feel constantly on edge or easily startled?",
+      "Do you have difficulty remembering important parts of the event?",
+      "Do you feel emotionally numb or detached from people?",
+      "Do you feel irritable or have angry outbursts?",
+      "Do you feel guilty or unable to stop blaming yourself?",
+      "Are you losing interest in activities that you once enjoyed?",
+      "Do you feel like you can't enjoy life anymore?"
+    ],
+    "Addiction": [
+      "Do you find it hard to stop using after you start?",
+      "Do you spend a lot of time using substances?",
+      "Have you ever tried to cut down but couldn't?",
+      "Do you experience cravings for the substance?",
+      "Has your substance use led to problems at work or home?",
+      "Do you continue to use despite these problems?",
+      "Have you given up important activities because of substance use?",
+      "Do you use substances in situations where it is physically hazardous?",
+      "Do you need to use more over time to get the same effect?",
+      "Have you experienced withdrawal symptoms when you stop using?"
+    ],
+    "Anxiety": [
+      "Do you feel nervous, anxious, or on edge?",
+      "Do you have trouble stopping or controlling worrying?",
+      "Do you worry too much about different things?",
+      "Do you have trouble relaxing?",
+      "Do you become easily annoyed or irritable?",
+      "Do you feel afraid, as if something awful might happen?",
+      "Do you have difficulty concentrating?",
+      "Do you often feel restless or keyed up?",
+      "Do you have muscle tension?",
+      "Do you have trouble falling or staying asleep?"
     ]
   }

@@ -16,5 +16,40 @@
     "Are there activities you used to enjoy that you no longer find pleasurable?",
     "How do you generally cope with stress and sadness?",
     "Please provide your Whatsapp Number where we can send report"
+  ],
+  "OCD": [
+    "Describe any compulsive behaviors you feel you must perform.",
+    "How do these behaviors impact your daily life?",
+    "What happens if you try to resist or stop these behaviors?",
+    "How much time do you spend performing these rituals daily?",
+    "Describe the distress or anxiety you feel related to these compulsions."
+  ],
+  "BipolarDisorder": [
+    "Describe your experiences during high-energy phases.",
+    "How do these mood swings affect your life and relationships?",
+    "Share examples of impulsive decisions made during high-energy periods.",
+    "Discuss any impact on your work or social activities.",
+    "Describe how you feel during low-energy or depressive periods."
+  ],
+  "PTSD": [
+    "Describe how the traumatic event continues to affect you.",
+    "Share the coping mechanisms you use for trauma-related symptoms.",
+    "Discuss how your view of the world or yourself has changed.",
+    "Explain any avoidance behavior related to the trauma.",
+    "Describe any feelings of numbness or detachment you experience."
+  ],
+  "Addiction": [
+    "Describe your experiences and challenges with substance use.",
+    "How has substance use affected your personal and professional life?",
+    "Discuss efforts you've made to control or reduce substance use.",
+    "Explain any physical or psychological effects you've experienced.",
+    "Describe how substance use impacts your daily responsibilities."
+  ],
+  "Anxiety": [
+    "Describe your experiences with anxiety and worry.",
+    "How does anxiety affect your daily activities and relationships?",
+    "Discuss strategies you've tried to manage anxiety.",
+    "Explain any physical symptoms you experience due to anxiety.",
+    "Share how anxiety has impacted your quality of life."
   ]
 }
