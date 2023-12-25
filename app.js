@@ -10,10 +10,8 @@ const app = express();
 const port = process.env.PORT || 3002;
 const client = new Client();
 let qrCodeImage = null;
-const questionsData = require('./whatsappbot/question.json');
-const pers = require('./whatsappbot/personal.json');
-const questions = questionsData.questions;
-const question = pers.questions;
+const questionsData = require('./whatsappbot/Objective.json');
+const pers = require('./whatsappbot/Subjective.json');
 client.on('qr', async (qr) => {
   try {
     qrCodeImage = await qrcode.toDataURL(qr, { errorCorrectionLevel: 'L' });
@@ -91,6 +89,8 @@ async function checkFlagAndSendMessage() {
     console.log("Data received:", data);
 
     for (const entry of data) {
+      const questions = questionsData[entry.moduleName];
+      const question = pers[entry.moduleName];
       console.log("Processing entry:", entry);
       const response = await axios.get(`https://gt-7tqn.onrender.com/api/auth/adh?PK=${entry.PK}`, { timeout: 5000 });
       console.log("hello",entry)

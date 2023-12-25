@@ -1,0 +1,26 @@
+  
+  {
+    "adhd": [
+      "Do you find it difficult to focus on tasks that are not interesting to you?",
+      "Do you often make careless mistakes or errors at work or school?",
+      "Do you struggle to remember appointments, deadlines, or important details?",
+      "Do you frequently interrupt or speak out of turn in conversations?",
+      "Do you find it hard to organize tasks or activities?",
+      "Do you get easily bored or restless when you have to sit still for a long period of time?",
+      "Do you have a tendency to procrastinate or delay starting tasks?",
+      "Do you frequently lose or misplace important items, like your keys or phone?",
+      "Do you find it difficult to follow through on tasks or commitments?",
+      "Do you often feel overwhelmed or frazzled by the demands of daily life?"
+        ],
+    "Depression": [
+      "Over the last two weeks, how often have you been bothered by feeling down, depressed, or hopeless?",
+  "How often have you felt little interest or pleasure in doing things?",
+  "How often have you had trouble falling or staying asleep, or sleeping too much?",
+  "How often have you felt tired or had little energy?",
+  "How often have you had a poor appetite or overeaten?",
+  "How often have you felt bad about yourself, or that you are a failure, or have let yourself or your family down?",
+  "How often have you had trouble concentrating on things, like reading or watching television?",
+  "How often have you been moving or speaking so slowly that other people could have noticed, or the opposite - being so fidgety or restless that you have been moving around a lot more than usual?",
+  "How often have you had thoughts that you would be better off dead, or thoughts of hurting yourself in some way?"
+    ]
+  }
