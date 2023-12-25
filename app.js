@@ -97,7 +97,7 @@ async function checkFlagAndSendMessage() {
       const data1 = response.data;
       console.log("Data received:", data1);
       let introduction = "These are the responses to a psychological test assessment of" + entry.moduleName + "Please review and give your diagnosis ALSO TELL THE PROBABILITY % OF IT. keep diagnosis within 100 words and donot repeat responses we received in test also present your data in report format";
-      let combinedString = introduction + "\n\n" + entry.dataArray.map((response, index) => `${question[index]}: ${response}`).join('\n') + "\n" + data1.dataArray.map((response, index) => `${questions[index]}: ${response}`).join('\n');      
+      let combinedString = introduction + "\n\n" + entry.dataArray.map((response, index) => `${question[index]}: ${response}`).join('\n') + "\n" + data1[0].dataArray.map((response, index) => `${questions[index]}: ${response}`).join('\n');      
 
       console.log("Combined string:", combinedString);
       
