@@ -158,14 +158,9 @@ async function checkFlagAndSendMessage() {
       doc.on('end', async () => {
         let pdfData = Buffer.concat(buffers);
 
-        // Convert buffer to readable stream
-        const stream = new Readable();
-        stream.push(pdfData);
-        stream.push(null); // End of stream
-
-        // Send the PDF via WhatsApp
+        // Send the PDF buffer via WhatsApp
         const formattedPhoneNumber = `91${entry.mobileNumber}@c.us`;
-        await client.sendMessage(formattedPhoneNumber, stream, { media: { filename: `report-${entry.mobileNumber}.pdf` } });
+        await client.sendMessage(formattedPhoneNumber, pdfData, { media: { filename: `report-${entry.mobileNumber}.pdf` } });
         console.log("PDF report sent to:", formattedPhoneNumber);
 
         // Update the database flag
