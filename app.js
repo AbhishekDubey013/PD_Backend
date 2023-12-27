@@ -84,52 +84,6 @@ const openai = new OpenAIApi(configuration);
 //   }
 // }
 
-// async function checkFlagAndSendMessage() {
-//   try {
-//     console.log("Fetching data from API...");
-//     const { data } = await axios.get('https://gt-7tqn.onrender.com/api/auth/pdh', { timeout: 5000 });
-//     console.log("Data received:", data);
-
-//     for (const entry of data) {
-//       const questions = questionsData[entry.moduleName];
-//       const question = pers[entry.moduleName];
-//       console.log("Processing entry:", entry);
-//       const response = await axios.get(`https://gt-7tqn.onrender.com/api/auth/adh?PK=${entry.PK}`, { timeout: 5000 });
-//       console.log("hello",entry)
-//       const data1 = response.data;
-//       console.log("Data received:", data1);
-//       let introduction = "These are the responses to a psychological test assessment of" + entry.moduleName + "Please review and give your diagnosis ALSO TELL THE PROBABILITY % OF IT. keep diagnosis within 100 words and donot repeat responses we received in test also present your data in report format";
-//       let combinedString = introduction + "\n\n" + entry.dataArray.map((response, index) => `${question[index]}: ${response}`).join('\n') + "\n" + data1[0].dataArray.map((response, index) => `${questions[index]}: ${response}`).join('\n');      
-
-//       console.log("Combined string:", combinedString);
-      
-//       const completion = await openai.createCompletion({
-//         model: 'text-davinci-003',
-//         prompt: combinedString,
-//         max_tokens: 200,
-//       });
-
-//       console.log("OpenAI response:", completion.data.choices[0].text);
-      
-//       const analysisResult = completion.data.choices[0].text;
-//       const whatsappNumber = entry.mobileNumber;
-//       const formattedPhoneNumber = `91${whatsappNumber}@c.us`;
-      
-//       const updateResponse = await axios.put('https://gt-7tqn.onrender.com/api/auth/pp', {
-//         _id: entry._id,
-//         newFlag: 'N'
-//       }, { timeout: 5000 });
-//       console.log("Database update response:", updateResponse.data);
-
-//       await client.sendMessage(formattedPhoneNumber, analysisResult);
-//       console.log("Message sent to:", formattedPhoneNumber);
-//     }
-//   } catch (error) {
-//     console.error('Error in checkFlagAndSendMessage:', error);
-//   }
-// }
-
-
 async function checkFlagAndSendMessage() {
   try {
     console.log("Fetching data from API...");
@@ -139,69 +93,42 @@ async function checkFlagAndSendMessage() {
     for (const entry of data) {
       const questions = questionsData[entry.moduleName];
       const question = pers[entry.moduleName];
+      console.log("Processing entry:", entry);
       const response = await axios.get(`https://gt-7tqn.onrender.com/api/auth/adh?PK=${entry.PK}`, { timeout: 5000 });
+      console.log("hello",entry)
       const data1 = response.data;
+      console.log("Data received:", data1);
+      let introduction = "These are the responses to a psychological test assessment of" + entry.moduleName + "Please review and give your diagnosis ALSO TELL THE PROBABILITY % OF IT. keep diagnosis within 100 words and donot repeat responses we received in test also present your data in report format";
+      let combinedString = introduction + "\n\n" + entry.dataArray.map((response, index) => `${question[index]}: ${response}`).join('\n') + "\n" + data1[0].dataArray.map((response, index) => `${questions[index]}: ${response}`).join('\n');      
 
-      let introduction = "These are the responses to a psychological test assessment of " + entry.moduleName + ". Please review and give your diagnosis. ALSO TELL THE PROBABILITY % OF IT. Keep diagnosis within 100 words and do not repeat responses received in the test. Present your data in report format.";
-      let combinedString = introduction + "\n\n" + entry.dataArray.map((response, index) => `${question[index]}: ${response}`).join('\n') + "\n" + (data1[0]?.dataArray.map((response, index) => `${questions[index]}: ${response}`).join('\n') || '');
-
-      // Create a new PDF document
-      const doc = new PDFDocument();
-      let buffers = [];
-      doc.on('data', buffers.push.bind(buffers));
-
-      // Add content to the PDF
-      doc.fontSize(12).text(combinedString, { align: 'left', paragraphGap: 10 });
-      doc.end();
-
-      // When PDF generation is finished
-      doc.on('end', async () => {
-        let pdfData = Buffer.concat(buffers);
-
-        // Send the PDF buffer via WhatsApp
-        const formattedPhoneNumber = `91${entry.mobileNumber}@c.us`;
-        await client.sendMessage(formattedPhoneNumber, pdfData, { media: { filename: `report-${entry.mobileNumber}.pdf` } });
-        console.log("PDF report sent to:", formattedPhoneNumber);
-
-        // Update the database flag
-        await axios.put('https://gt-7tqn.onrender.com/api/auth/pp', {
-          _id: entry._id,
-          newFlag: 'N'
-        }, { timeout: 5000 });
+      console.log("Combined string:", combinedString);
+      
+      const completion = await openai.createCompletion({
+        model: 'text-davinci-003',
+        prompt: combinedString,
+        max_tokens: 200,
       });
+
+      console.log("OpenAI response:", completion.data.choices[0].text);
+      
+      const analysisResult = completion.data.choices[0].text;
+      const whatsappNumber = entry.mobileNumber;
+      const formattedPhoneNumber = `91${whatsappNumber}@c.us`;
+      
+      const updateResponse = await axios.put('https://gt-7tqn.onrender.com/api/auth/pp', {
+        _id: entry._id,
+        newFlag: 'N'
+      }, { timeout: 5000 });
+      console.log("Database update response:", updateResponse.data);
+
+      await client.sendMessage(formattedPhoneNumber, analysisResult);
+      console.log("Message sent to:", formattedPhoneNumber);
     }
   } catch (error) {
     console.error('Error in checkFlagAndSendMessage:', error);
   }
 }
 
-async function runCompletion(whatsappNumber, message) {
-  try {
-    let conversation = localConversations.get(whatsappNumber) || { history: [], userName: null, prompt: null };
-
-    if (!Array.isArray(conversation.history)) {
-      conversation.history = [];
-      conversation.history.push(message);
-    }
-
-    const context = `about user, use this background to frame your response for a user: ${conversation.prompt}\n Chat history, last 5 chat messages for you to get context: ${conversation.history.join('\n')}\nlatest user message, latest message by user to which you are suppose to respond by also considering about user and chat history: ${message}`;
-    const completion = await openai.createCompletion({
-      model: 'text-davinci-003',
-      prompt: context,
-      max_tokens: 200,
-    });
-
-    conversation.history.push(message);
-    conversation.history = conversation.history.slice(-5);
-    localConversations.set(whatsappNumber, conversation);
-
-    return completion.data.choices[0].text;
-
-  } catch (err) {
-    console.error("Error in runCompletion:", err);
-    throw err;
-  }
-}
 
 client.on('message', async (message) => {
   try {
