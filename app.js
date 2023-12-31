@@ -54,36 +54,6 @@ const openai = new OpenAIApi(configuration);
 // });
 
 
-// async function checkFlagAndSendMessage() {
-//   try {
-//     // Fetch data from database
-//     const { data } = await axios.get('https://gt-7tqn.onrender.com/api/auth/adh', {
-//       timeout: 5000,
-//     });
-//     console.log(data);
-//     // Loop through each entry to check the flag
-//     for (const entry of data) {
-//         const whatsappNumber = entry.mobileNumber;
-//         const formattedPhoneNumber = `91${whatsappNumber}@c.us`;
-//         console.log(entry.mobileNumber)
-
-
-//         // Update the flag in the database to 'N'
-//         await axios.put('https://gt-7tqn.onrender.com/api/auth/up', {
-//           _id: entry._id,
-//           newFlag: 'N'
-//         }, {
-//           timeout: 5000,
-//         });
-
-//         // Send the WhatsApp message
-//         await client.sendMessage(formattedPhoneNumber, 'Your data has been saved successfully!');
-//     }
-//   } catch (error) {
-//     console.error('Error in checkFlagAndSendMessage:', error);
-//   }
-// }
-
 async function checkFlagAndSendMessage() {
   try {
     console.log("Fetching data from API...");
@@ -98,8 +68,9 @@ async function checkFlagAndSendMessage() {
       console.log("hello",entry)
       const data1 = response.data;
       console.log("Data received:", data1);
-      let introduction = "These are the responses to a psychological test assessment of" + entry.moduleName + "Please review and give your diagnosis ALSO TELL THE PROBABILITY % OF IT. keep diagnosis within 100 words and donot repeat responses we received in test also present your data in report format";
-      let combinedString = introduction + "\n\n" + entry.dataArray.map((response, index) => `${question[index]}: ${response}`).join('\n') + "\n" + data1[0].dataArray.map((response, index) => `${questions[index]}: ${response}`).join('\n');      
+      let introduction = `Assessment: ${entry.moduleName}. Key observations: `;
+      let promptForDiagnosis = "Based on these observations, provide a concise diagnosis with a probability percentage, formatted for easy comprehension by a non-medical user.";
+      let combinedString = introduction + "\n\n" + entry.dataArray.map((response, index) => `${question[index]}: ${response}`).join('\n') + "\n" + data1[0].dataArray.map((response, index) => `${questions[index]}: ${response}`).join('\n') + promptForDiagnosis;      
 
       console.log("Combined string:", combinedString);
       
@@ -128,6 +99,10 @@ async function checkFlagAndSendMessage() {
     console.error('Error in checkFlagAndSendMessage:', error);
   }
 }
+
+
+
+
 
 
 client.on('message', async (message) => {
