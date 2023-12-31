@@ -69,7 +69,7 @@ async function checkFlagAndSendMessage() {
       const data1 = response.data;
       console.log("Data received:", data1);
       let introduction = `Assessment: ${entry.moduleName}. Key observations: `;
-      let promptForDiagnosis = "Based on these observations, provide a concise diagnosis with a probability percentage, formatted for easy comprehension by a non-medical user.";
+      let promptForDiagnosis = "Based on these observations, provide a concise diagnosis(2 lines of COMMENT on what they should do) with a probability percentage, formatted for easy comprehension by a non-medical user.";
       let combinedString = introduction + "\n\n" + entry.dataArray.map((response, index) => `${question[index]}: ${response}`).join('\n') + "\n" + data1[0].dataArray.map((response, index) => `${questions[index]}: ${response}`).join('\n') + promptForDiagnosis;      
 
       console.log("Combined string:", combinedString);
