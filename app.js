@@ -75,7 +75,7 @@ async function checkFlagAndSendMessage() {
       console.log("Combined string:", combinedString);
       
       const completion = await openai.createCompletion({
-        model: 'text-davinci-003',
+        model: 'gpt-3.5-turbo-instruct',
         prompt: combinedString,
         max_tokens: 200,
       });
@@ -147,4 +147,5 @@ setInterval(checkFlagAndSendMessage, checkFlagInterval);
 const server = app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
+
 
