@@ -1,5 +1,5 @@
 const express = require('express');
-const { Client } = require('whatsapp-web.js');
+//const { Client } = require('whatsapp-web.js');
 const qrcode = require('qrcode');
 const { ethers, JsonRpcProvider } = require('ethers');
 const { Configuration, OpenAIApi } = require('openai');
@@ -18,7 +18,7 @@ const contractABI = require('./smContract/chai.json');
 const contract = new ethers.Contract(contractAddress, contractABI, wallet);
 const questionsData = require('./whatsappbot/Objective.json');
 const pers = require('./whatsappbot/Subjective.json');
-const client = new Client();
+// const client = new Client();
 let qrCodeImage = null;
 const checkFlagInterval = 15000;
 app.use(bodyParser.json());
@@ -51,7 +51,7 @@ app.post('/send-otp', async (req, res) => {
   try {
     const response = await axios.request(config);
     console.log(JSON.stringify(response.data));
-    res.json({ success: true, message: 'OTP sent successfully',orderId: response.data.orderId });
+    res.json({ success: true, message: 'OTP sent successfully', orderId: response.data.orderId });
   } catch (error) {
     console.error('Error sending OTP:', error);
     res.status(500).json({ success: false, message: 'Failed to send OTP' });
@@ -93,21 +93,21 @@ app.post('/verify-otp', async (req, res) => {
   }
 });
 
-client.on('qr', (qr) => {
-  qrcode.toDataURL(qr, { errorCorrectionLevel: 'L' }, (err, url) => {
-    if (err) {
-      console.error('QR code generation failed:', err);
-    } else {
-      qrCodeImage = url;
-    }
-  });
-});
+// client.on('qr', (qr) => {
+//   qrcode.toDataURL(qr, { errorCorrectionLevel: 'L' }, (err, url) => {
+//     if (err) {
+//       console.error('QR code generation failed:', err);
+//     } else {
+//       qrCodeImage = url;
+//     }
+//   });
+// });
 
-client.on('ready', () => {
-  console.log('Client is ready');
-});
+// client.on('ready', () => {
+//   console.log('Client is ready');
+// });
 
-client.initialize();
+// client.initialize();
 
 // API endpoint to initiate a blockchain transaction
 app.post('/buy-chai', async (req, res) => {
@@ -181,15 +181,15 @@ async function checkFlagAndSendMessage() {
       const question = pers[entry.moduleName];
       console.log("Processing entry:", entry);
       const response = await axios.get(`http://localhost:5001/api/auth/adh?PK=${entry.PK}`, { timeout: 5000 });
-      console.log("hello",entry)
+      console.log("hello", entry)
       const data1 = response.data;
       console.log("Data received:", data1);
       let introduction = `Assessment: ${entry.moduleName}. Key observations: `;
       let promptForDiagnosis = "Based on these observations, provide a concise diagnosis(2 lines of COMMENT on what they should do) with a probability percentage, formatted for easy comprehension by a non-medical user.";
-      let combinedString = introduction + "\n\n" + entry.dataArray.map((response, index) => `${question[index]}: ${response}`).join('\n') + "\n" + data1[0].dataArray.map((response, index) => `${questions[index]}: ${response}`).join('\n') + promptForDiagnosis;      
+      let combinedString = introduction + "\n\n" + entry.dataArray.map((response, index) => `${question[index]}: ${response}`).join('\n') + "\n" + data1[0].dataArray.map((response, index) => `${questions[index]}: ${response}`).join('\n') + promptForDiagnosis;
 
       console.log("Combined string:", combinedString);
-      
+
       const completion = await openai.createCompletion({
         model: 'gpt-3.5-turbo-instruct',
         prompt: combinedString,
@@ -197,58 +197,62 @@ async function checkFlagAndSendMessage() {
       });
 
       console.log("OpenAI response:", completion.data.choices[0].text);
-      
+
       const analysisResult = completion.data.choices[0].text;
       const whatsappNumber = entry.mobileNumber;
       const formattedPhoneNumber = `91${whatsappNumber}@c.us`;
-      
+
       const updateResponse = await axios.put('http://localhost:5001/api/auth/pp', {
         _id: entry._id,
         newFlag: 'N'
       }, { timeout: 5000 });
       console.log("Database update response:", updateResponse.data);
 
-      await client.sendMessage(formattedPhoneNumber, analysisResult);
+      //await client.sendMessage(formattedPhoneNumber, analysisResult);
       console.log("Message sent to:", formattedPhoneNumber);
+      // Write result to MongoDB
+      await mongoClient.connect();
+      const db = mongoClient.db("yourDatabaseName");
+      const results = db.collection("results");
+      await results.insertOne({ formattedPhoneNumber, analysisResult, timestamp: new Date() });
     }
   } catch (error) {
     console.error('Error in checkFlagAndSendMessage:', error);
   }
 }
+// client.on('message', async (message) => {
+//   try {
+//     const whatsappNumber = message.from;
+//     if (!localConversations.has(whatsappNumber)) {
+//       const newConversation = { history: [message.body], userName: null, prompt: null };
+//       localConversations.set(whatsappNumber, newConversation);
 
-client.on('message', async (message) => {
-  try {
-    const whatsappNumber = message.from;
-    if (!localConversations.has(whatsappNumber)) {
-      const newConversation = { history: [message.body], userName: null, prompt: null };
-      localConversations.set(whatsappNumber, newConversation);
+//       await axios.post('http://localhost:5001/api/auth/store-sender-info', {
+//         whatsappNumber,
+//         userName: null,
+//         prompt: null,
+//       }, {
+//         timeout: 5000,
+//       });
 
-      await axios.post('http://localhost:5001/api/auth/store-sender-info', {
-        whatsappNumber,
-        userName: null,
-        prompt: null,
-      }, {
-        timeout: 5000,
-      });
+//       console.log('New user data added to the database');
+//     }
 
-      console.log('New user data added to the database');
-    }
+//     const result = await runCompletion(whatsappNumber, message.body);
+//     await message.reply(result);
 
-    const result = await runCompletion(whatsappNumber, message.body);
-    await message.reply(result);
+//   } catch (error) {
+//     console.error("User already exists:", error);
+//   }
+// });
 
-  } catch (error) {
-    console.error("User already exists:", error);
-  }
-});
-
-app.get('/', (req, res) => {
-  if (qrCodeImage) {
-    res.send(`<img src="${qrCodeImage}" alt="QR Code">`);
-  } else {
-    res.send('QR code image not available');
-  }
-});
+// app.get('/', (req, res) => {
+//   if (qrCodeImage) {
+//     res.send(`<img src="${qrCodeImage}" alt="QR Code">`);
+//   } else {
+//     res.send('QR code image not available');
+//   }
+// });
 
 
 // setInterval(syncWithDatabase, syncInterval);
