@@ -173,14 +173,14 @@ app.post('/buy-chai', async (req, res) => {
 async function checkFlagAndSendMessage() {
   try {
     console.log("Fetching data from API...");
-    const { data } = await axios.get('http://localhost:5001/api/auth/pdh', { timeout: 5000 });
+    const { data } = await axios.get('https://mongodb-ttio.onrender.com/api/auth/pdh', { timeout: 5000 });
     console.log("Data received:", data);
 
     for (const entry of data) {
       const questions = questionsData[entry.moduleName];
       const question = pers[entry.moduleName];
       console.log("Processing entry:", entry);
-      const response = await axios.get(`http://localhost:5001/api/auth/adh?PK=${entry.PK}`, { timeout: 5000 });
+      const response = await axios.get(`https://mongodb-ttio.onrender.com/api/auth/adh?PK=${entry.PK}`, { timeout: 5000 });
       console.log("hello", entry)
       const data1 = response.data;
       console.log("Data received:", data1);
@@ -202,7 +202,7 @@ async function checkFlagAndSendMessage() {
       const whatsappNumber = entry.mobileNumber;
       const formattedPhoneNumber = `91${whatsappNumber}@c.us`;
 
-      const updateResponse = await axios.put('http://localhost:5001/api/auth/pp', {
+      const updateResponse = await axios.put('https://mongodb-ttio.onrender.com/api/auth/pp', {
         _id: entry._id,
         newFlag: 'N'
       }, { timeout: 5000 });
@@ -227,7 +227,7 @@ async function checkFlagAndSendMessage() {
 //       const newConversation = { history: [message.body], userName: null, prompt: null };
 //       localConversations.set(whatsappNumber, newConversation);
 
-//       await axios.post('http://localhost:5001/api/auth/store-sender-info', {
+//       await axios.post('https://mongodb-ttio.onrender.com/api/auth/store-sender-info', {
 //         whatsappNumber,
 //         userName: null,
 //         prompt: null,
