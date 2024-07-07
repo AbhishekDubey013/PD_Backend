@@ -189,7 +189,7 @@ async function checkFlagAndSendMessage() {
       // let combinedString = introduction + "\n\n" + entry.dataArray.map((response, index) => `${question[index]}: ${response}`).join('\n') + "\n" + data1[0].dataArray.map((response, index) => `${questions[index]}: ${response}`).join('\n') + promptForDiagnosis;
 
       let introduction = `Assessment: ${entry.moduleName}. Key observations gathered from responses are as follows:`;
-      let promptForDiagnosis = "Based on the above observations, please provide a concise diagnostic impression. Include a comment on the probable feelings or psychological states of the individual along with an estimated probability of this diagnosis. Ensure this is formatted in an easy-to-understand manner for someone without a medical background.";
+      let promptForDiagnosis = "Based on the above observations, please provide a concise diagnostic impression. Include a comment on the probable feelings or psychological states of the individual along with an estimated probability(in numeric percentage) of this diagnosis. Ensure this is formatted in an easy-to-understand manner for someone without a medical background.";
       let combinedString = `${introduction}\n\n${entry.dataArray.map((response, index) => `${question[index]}: ${response}`).join('\n')}\n\nFurther information based on additional data:\n${data1[0].dataArray.map((response, index) => `${questions[index]}: ${response}`).join('\n')}\n\n${promptForDiagnosis}`;
       
 
