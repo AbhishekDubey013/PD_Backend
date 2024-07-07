@@ -184,9 +184,14 @@ async function checkFlagAndSendMessage() {
       console.log("hello", entry)
       const data1 = response.data;
       console.log("Data received:", data1);
-      let introduction = `Assessment: ${entry.moduleName}. Key observations: `;
-      let promptForDiagnosis = "Based on these observations, provide a concise diagnosis(2 lines of COMMENT on what they should do) with a probability percentage, formatted for easy comprehension by a non-medical user.";
-      let combinedString = introduction + "\n\n" + entry.dataArray.map((response, index) => `${question[index]}: ${response}`).join('\n') + "\n" + data1[0].dataArray.map((response, index) => `${questions[index]}: ${response}`).join('\n') + promptForDiagnosis;
+      // let introduction = `Assessment: ${entry.moduleName}. Key observations: `;
+      // let promptForDiagnosis = "Based on these observations, provide a concise diagnosis(4 lines of COMMENT on what they must be feeling) with a probability percentage, formatted for easy comprehension by a non-medical user.";
+      // let combinedString = introduction + "\n\n" + entry.dataArray.map((response, index) => `${question[index]}: ${response}`).join('\n') + "\n" + data1[0].dataArray.map((response, index) => `${questions[index]}: ${response}`).join('\n') + promptForDiagnosis;
+
+      let introduction = `Assessment: ${entry.moduleName}. Key observations gathered from responses are as follows:`;
+      let promptForDiagnosis = "Based on the above observations, please provide a concise diagnostic impression. Include a comment on the probable feelings or psychological states of the individual along with an estimated probability of this diagnosis. Ensure this is formatted in an easy-to-understand manner for someone without a medical background.";
+      let combinedString = `${introduction}\n\n${entry.dataArray.map((response, index) => `${question[index]}: ${response}`).join('\n')}\n\nFurther information based on additional data:\n${data1[0].dataArray.map((response, index) => `${questions[index]}: ${response}`).join('\n')}\n\n${promptForDiagnosis}`;
+      
 
       console.log("Combined string:", combinedString);
 
