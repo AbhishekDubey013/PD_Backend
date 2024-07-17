@@ -6,7 +6,6 @@ const { Configuration, OpenAIApi } = require('openai');
 const axios = require('axios');
 const MongoClient = require('mongodb').MongoClient;
 const bodyParser = require('body-parser');
-const cors = require('cors');
 require('dotenv').config();
 const app = express();
 // Ethereum setup
