@@ -22,7 +22,18 @@ const pers = require('./whatsappbot/Subjective.json');
 let qrCodeImage = null;
 const checkFlagInterval = 15000;
 app.use(bodyParser.json());
+const cors = require("cors");
 app.use(cors());
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin","https://psychdoc.in");
+  //"https://psychdoc.in"
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
+app.use(express.json())
 
 const openai = new OpenAIApi(new Configuration({ apiKey: process.env.OPENAI_API_KEY }));
 const mongoClient = new MongoClient(process.env.MONGO_URI);
