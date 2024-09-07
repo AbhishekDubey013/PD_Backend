@@ -65,9 +65,9 @@ async function checkFlagAndSendMessage() {
         max_tokens: 200,
       });
 
-      console.log("OpenAI response:", completion.data.choices[0].text);
+      console.log("OpenAI response:", completion.choices[0].text);
 
-      const analysisResult = completion.data.choices[0].text;
+      const analysisResult = completion.choices[0].text;
       const whatsappNumber = entry.mobileNumber;
       const formattedPhoneNumber = `91${whatsappNumber}@c.us`;
 
