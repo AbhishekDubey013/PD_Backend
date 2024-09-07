@@ -59,7 +59,7 @@ async function checkFlagAndSendMessage() {
       
       console.log("Combined string:", combinedString);
 
-      const completion = await openai.createCompletion({
+      const completion = await openai.completions.create({
         model: 'gpt-3.5-turbo-instruct',
         prompt: combinedString,
         max_tokens: 200,
