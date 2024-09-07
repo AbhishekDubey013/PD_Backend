@@ -12,7 +12,8 @@ const app = express();
 const provider = new JsonRpcProvider(process.env.GOERLI_URL);
 const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
 const contractAddress = "0xB4726F977c1a46b571194161808cfF8f73980b02"; // Replace with your Healthcare contract address
-const contractABI = require('./smContract/Healthcare.json'); // Replace with the correct ABI for your Healthcare contract
+const contractArtifact = require('./smContract/Healthcare.json'); // Replace with the correct ABI for your Healthcare contract
+const contractABI = contractArtifact.abi;
 const contract = new ethers.Contract(contractAddress, contractABI, wallet);
 
 const questionsData = require('./whatsappbot/Objective.json');
