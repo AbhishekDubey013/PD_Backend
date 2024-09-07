@@ -86,8 +86,8 @@ async function checkFlagAndSendMessage() {
       // ---- Blockchain Transaction ----
       try {
         const tx = await contract.BOOK_APPOINTMENT(
-          "P-01", // Sample patientId
-          "D-001", // Sample doctorId
+          "1", // Sample patientId
+          "1", // Sample doctorId
           "09:00", // Sample from time
           "10:00", // Sample to time
           "2024-09-08", // Sample appointmentDate
