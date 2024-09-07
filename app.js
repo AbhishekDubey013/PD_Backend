@@ -1,7 +1,7 @@
 const express = require('express');
 const qrcode = require('qrcode');
 const { ethers, JsonRpcProvider } = require('ethers');
-const { Configuration, OpenAIApi } = require('openai');
+const  OpenAIApi = require('openai');
 const axios = require('axios');
 const MongoClient = require('mongodb').MongoClient;
 const bodyParser = require('body-parser');
@@ -34,7 +34,8 @@ app.use((req, res, next) => {
 });
 app.use(express.json());
 
-const openai = new OpenAIApi(new Configuration({ apiKey: process.env.OPENAI_API_KEY }));
+const openai = new OpenAIApi({ key: process.env.OPENAI_API_KEY });
+
 
 // Function to check condition and trigger actions
 async function checkFlagAndSendMessage() {
