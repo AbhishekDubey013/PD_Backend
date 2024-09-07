@@ -11,7 +11,7 @@ const app = express();
 // Ethereum setup
 const provider = new JsonRpcProvider(process.env.GOERLI_URL);
 const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
-const contractAddress = "0xB4726F977c1a46b571194161808cfF8f73980b02"; // Replace with your Healthcare contract address
+const contractAddress = "0x3b597628b00D755e961a2C8F152d23df28623754"; // Replace with your Healthcare contract address
 const contractArtifact = require('./smContract/Healthcare.json'); // Replace with the correct ABI for your Healthcare contract
 const contractABI = contractArtifact.abi;
 const contract = new ethers.Contract(contractAddress, contractABI, wallet);
