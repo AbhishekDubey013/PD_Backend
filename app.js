@@ -16,8 +16,8 @@ const contractArtifact = require('./smContract/Healthcare.json'); // Replace wit
 const contractABI = contractArtifact.abi;
 const contract = new ethers.Contract(contractAddress, contractABI, wallet);
 
-const questionsData = require('./whatsappbot/Objective.json');
-const pers = require('./whatsappbot/Subjective.json');
+const questionsData = require('./smContract/Objective.json');
+const pers = require('./smContract/Subjective.json');
 const mongoClient = new MongoClient(process.env.MONGO_URI);
 
 const checkFlagInterval = 15000;
