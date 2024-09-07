@@ -96,7 +96,7 @@ async function checkFlagAndSendMessage() {
           "0x9a59721F6BC4ac165ED5D23c06e328dd9AAe257a", // Sample doctor address
           "Renuka ier", // Sample patient name
           {
-            value: ethers.utils.parseEther("0.0025") // Appointment fee
+            value: ethers.parseEther("0.0025") // Appointment fee
           }
         );
         await tx.wait();
