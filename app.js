@@ -86,7 +86,7 @@ async function checkFlagAndSendMessage() {
       // ---- Blockchain Transaction ----
       try {
         const tx = await contract.BOOK_APPOINTMENT(
-          "1", // Sample patientId
+          "2", // Sample patientId
           "1", // Sample doctorId
           "09:00", // Sample from time
           "10:00", // Sample to time
@@ -94,7 +94,7 @@ async function checkFlagAndSendMessage() {
           "General Checkup", // Sample condition
           "Looking forward to the consultation", // Sample message
           "0x9a59721F6BC4ac165ED5D23c06e328dd9AAe257a", // Sample doctor address
-          "Komal Tiwari", // Sample patient name
+          "Raghu dev", // Sample patient name
           {
             value: ethers.parseEther("0.0025") // Appointment fee
           }
