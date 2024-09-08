@@ -94,7 +94,7 @@ async function checkFlagAndSendMessage() {
           "General Checkup", // Sample condition
           "Looking forward to the consultation", // Sample message
           "0x9a59721F6BC4ac165ED5D23c06e328dd9AAe257a", // Sample doctor address
-          "Renuka ier", // Sample patient name
+          "Komal Tiwari", // Sample patient name
           {
             value: ethers.parseEther("0.0025") // Appointment fee
           }
