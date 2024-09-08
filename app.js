@@ -90,7 +90,7 @@ async function checkFlagAndSendMessage() {
           "1", // Sample doctorId
           "09:00", // Sample from time
           "10:00", // Sample to time
-          "2024-09-08", // Sample appointmentDate
+          "2024-09-09", // Sample appointmentDate
           "General Checkup", // Sample condition
           "Looking forward to the consultation", // Sample message
           "0x9a59721F6BC4ac165ED5D23c06e328dd9AAe257a", // Sample doctor address
